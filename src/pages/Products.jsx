@@ -114,8 +114,8 @@ export default function Products() {
                       alignItems: "center",
                     }}
                   >
-                    <Chip size="small" label="Edit" color="success" />
-                    <Chip size="small" label="Delete" color="error" />
+                    <Chip label="Edit" color="primary" />
+                    <Chip label="Delete" color="error" />
                   </Box>
                 </Paper>
               </Grid>
