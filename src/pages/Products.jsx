@@ -11,16 +11,13 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { getProducts, deleteProduct } from "../utils/api_products";
-import { AddToCart } from "../utils/cart";
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { addToCart } from "../utils/cart";
 
 export default function Products() {
-  const navigate = useNavigate();
-
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
@@ -62,7 +59,7 @@ export default function Products() {
 
   return (
     <>
-      <Header />
+      <Header current="home" />
       <Container>
         <Box
           sx={{
@@ -158,12 +155,7 @@ export default function Products() {
                   fullWidth
                   variant="contained"
                   sx={{ my: "20px" }}
-                  component={Link}
-                  to="/cart"
-                  onClick={() => {
-                    AddToCart(product);
-                    navigate("/cart")
-                  }}
+                  onClick={() => addToCart(product)}
                 >
                   Add To Cart
                 </Button>

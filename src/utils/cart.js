@@ -1,60 +1,43 @@
 import { toast } from "sonner";
 
 // add product to cart
-export function AddToCart(product) {
-  const dataInLocalStorage = localStorage.getItem("carts");
-  const carts = dataInLocalStorage ? JSON.parse(dataInLocalStorage) : [];
-
-  let updatedCarts;
-
-  const existingItem = carts.find((cart) => {
-    if (product._id === cart.id) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  if (existingItem) {
-    updatedCarts = carts.map((cart) =>
-      cart.id === product._id ? { ...cart, quantity: cart.quantity + 1 } : cart
-    );
+export function addToCart(product) {
+  // 1. get current cart data from local storage
+  const cartData = getCart();
+  // 2. find out if the product already exists in the cart or not
+  const selected = cartData.find((item) => item._id === product._id);
+  if (selected) {
+    // 3. if product already exists, just increase the quantity
+    selected.quantity += 1; // plus one
   } else {
-    updatedCarts = [
-      ...carts,
-      {
-        id: product._id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        quantity: 1,
-      },
-    ];
+    // 4. if not exist, add the product to cart
+    // long method
+    // const selectedProduct = { ...product }
+    // selectedProduct.quantity = 1;
+    // cartData.push(selectedProduct);
+    // short method
+    cartData.push({
+      ...product,
+      quantity: 1,
+    });
   }
-
-  localStorage.setItem("carts", JSON.stringify(updatedCarts));
-  toast("Product added to cart");
-  updateCart(carts);
-  return true;
+  // 5. update the cart (in local storage) with the latest data
+  updateCart(cartData);
+  // 6. display the notification
+  toast.success(`"${product.name}" has been added to cart`);
 }
 
 // get all the items in the cart
 export function getCart() {
-  return JSON.parse(localStorage.getItem("carts")) || [];
+  const cartInLocalStorage = localStorage.getItem("cart");
+  const cartData = cartInLocalStorage ? JSON.parse(cartInLocalStorage) : [];
+  return cartData;
 }
 
 // update the cart to local storage
-export function updateCart(carts) {
-  updateCart(carts);
-  return true;
+export function updateCart(cart) {
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 // delete items from the cart
-export function deleteItemFromCart(id) {
-  const dataInLocalStorage = localStorage.getItem("carts");
-  const carts = dataInLocalStorage ? JSON.parse(dataInLocalStorage) : [];
-  const updatedCarts = carts.filter((cart) => cart.id !== id);
-  localStorage.setItem("carts", JSON.stringify(updatedCarts));
-  toast.success("Product has been deleted");
-}
+export function deleteItemFromCart(id) {}

@@ -1,7 +1,6 @@
 import axios from "axios";
-import { data } from "react-router";
 
-const API_URL = "http://localhost:2303/";
+import { API_URL } from "./constants";
 
 export async function getProducts(category, page = 1) {
   const response = await axios.get(

@@ -6,63 +6,36 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Link } from "react-router";
-import { useNavigate } from "react-router";
-import { deleteItemFromCart } from "../utils/cart";
+import { useState } from "react";
+import { getCart, updateCart } from "../utils/cart";
 import Swal from "sweetalert2";
+import Header from "../components/Header";
+import { Link } from "react-router";
 
 const CartPage = () => {
-  const navigate = useNavigate();
+  // load the cart items from the local storage
+  const [cart, setCart] = useState(getCart());
 
-  const dataInLocalStorage = localStorage.getItem("carts");
-  const carts = dataInLocalStorage ? JSON.parse(dataInLocalStorage) : [];
+  const getCartTotal = () => {
+    let total = 0;
+    cart.forEach((product) => {
+      total += product.quantity * product.price;
+    });
+    return total.toFixed(2);
+  };
 
-  let totalPrice = 0;
-  const priceArray = carts.map((cart) => cart.price * cart.quantity);
-  for (let i = 0; i < priceArray.length; i++) {
-    totalPrice = totalPrice + priceArray[i];
-  }
+  const removeItemFromCart = (product) => {
+    // 1. remove product from cart
+    const updatedCart = cart.filter((item) => item._id !== product._id);
+    // 2. update the cart data in local storage and the state
+    updateCart(updatedCart);
+    // 3. update the state
+    setCart(updatedCart);
+  };
 
   return (
     <>
-      <Box
-        sx={{
-          py: 4,
-          textAlign: "center",
-          borderBottom: "1px solid #ddd",
-          mb: 3,
-        }}
-      >
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: "700",
-            mb: 3,
-          }}
-        >
-          Cart
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            variant="outlined"
-            color="primary"
-            sx={{ mr: 1 }}
-            component={Link}
-            to="/"
-          >
-            Home
-          </Button>
-          <Button variant="contained" color="primary" sx={{ ml: 1 }}>
-            Cart
-          </Button>
-        </Box>
-      </Box>
+      <Header current="cart" title="Cart" />
       <Container sx={{ textAlign: "center" }}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -76,19 +49,19 @@ const CartPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {carts.length > 0 ? (
-                carts.map((cart) => (
+              {cart.length > 0 ? (
+                cart.map((product) => (
                   <TableRow
-                    key={cart.id}
+                    key={product.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {cart.name}
+                      {product.name}
                     </TableCell>
-                    <TableCell align="right">$ {cart.price}</TableCell>
-                    <TableCell align="right">{cart.quantity}</TableCell>
+                    <TableCell align="right">${product.price}</TableCell>
+                    <TableCell align="right">{product.quantity}</TableCell>
                     <TableCell align="right">
-                      $ {cart.price * cart.quantity}
+                      ${(product.price * product.quantity).toFixed(2)}
                     </TableCell>
                     <TableCell align="right">
                       <Button
@@ -106,8 +79,7 @@ const CartPage = () => {
                           }).then(async (result) => {
                             // once user confirm, then we delete the product
                             if (result.isConfirmed) {
-                              deleteItemFromCart(cart.id);
-                              navigate("/cart");
+                              removeItemFromCart(product);
                             }
                           });
                         }}
@@ -133,20 +105,20 @@ const CartPage = () => {
               <TableRow
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row"></TableCell>
-                <TableCell align="right"></TableCell>
-                <TableCell align="right"></TableCell>
-                <TableCell align="right">$ {totalPrice}</TableCell>
+                <TableCell colSpan={3}></TableCell>
+                <TableCell align="right">${getCartTotal()}</TableCell>
                 <TableCell align="right"></TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, mb: 3 }}>
           <Button
             variant="contained"
             color="primary"
-            disabled={carts.length === 0}
+            component={Link}
+            to="/checkout"
+            disabled={cart.length === 0 ? true : false}
           >
             Checkout
           </Button>
