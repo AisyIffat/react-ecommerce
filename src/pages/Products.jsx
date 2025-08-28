@@ -9,6 +9,10 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { getProducts, deleteProduct } from "../utils/api_products";
 import { useState, useEffect } from "react";
@@ -16,6 +20,7 @@ import Header from "../components/Header";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { addToCart } from "../utils/cart";
+import { API_URL } from "../utils/constants";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -120,71 +125,78 @@ export default function Products() {
         </Box>
         <Grid container spacing={2}>
           {products.map((product) => (
-            <Grid size={{ sm: 12, md: 6, lg: 4 }}>
-              <Paper
-                sx={{
-                  p: "10px",
-                  minHeight: "240px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <h2>{product.name}</h2>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Chip
-                    size="small"
-                    label={"$ " + product.price}
-                    variant="outlined"
-                    color="success"
-                  />
-                  <Chip
-                    size="small"
-                    label={product.category}
-                    variant="outlined"
-                    color="error"
-                  />
-                </Box>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{ my: "20px" }}
-                  onClick={() => addToCart(product)}
-                >
-                  Add To Cart
-                </Button>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    component={Link}
-                    to={`/products/${product._id}/edit`}
-                    variant="contained"
-                    color="info"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      handleProductDelete(product._id);
+            <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }} key={product._id}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={
+                    API_URL +
+                    (product.image
+                      ? product.image
+                      : "uploads/default_image.jpg")
+                  }
+                />
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h5" sx={{ minHeight: "64px" }}>
+                    {product.name}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      pt: 2,
                     }}
                   >
-                    Delete
+                    <Chip
+                      label={"$" + product.price}
+                      variant="outlined"
+                      color="success"
+                    />
+                    <Chip
+                      label={product.category}
+                      variant="outlined"
+                      color="primary"
+                    />
+                  </Box>
+                </CardContent>
+                <CardActions sx={{ display: "block", px: 3, pb: 3 }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => addToCart(product)}
+                  >
+                    Add To Cart
                   </Button>
-                </Box>
-              </Paper>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      pt: 2,
+                      marginLeft: "0px !important",
+                    }}
+                  >
+                    <Button
+                      component={Link}
+                      to={`/products/${product._id}/edit`}
+                      variant="contained"
+                      color="info"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        handleProductDelete(product._id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </CardActions>
+              </Card>
             </Grid>
           ))}
         </Grid>

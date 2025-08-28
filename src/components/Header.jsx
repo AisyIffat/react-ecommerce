@@ -55,6 +55,14 @@ const Header = (props) => {
         >
           My Orders
         </Button>
+        <Button
+          variant={current === "categories" ? "contained" : "outlined"}
+          color="primary"
+          component={Link}
+          to="/categories"
+        >
+          Manage Categories
+        </Button>
       </Box>
     </Box>
   );

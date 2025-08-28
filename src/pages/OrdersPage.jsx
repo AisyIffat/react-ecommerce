@@ -35,17 +35,6 @@ const OrdersPage = () => {
       });
   }, []); // call only once when the page load
 
-  console.log(orders);
-
-  const removeOrder = (order) => {
-    // 1. remove order
-    const updatedOrder = cart.filter((item) => item._id !== product._id);
-    // 2. update the cart data in local storage and the state
-    updateCart(updatedCart);
-    // 3. update the state
-    setCart(updatedCart);
-  };
-
   const handleUpdate = async (_id, status) => {
     try {
       await updateOrder(_id, status);
