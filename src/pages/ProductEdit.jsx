@@ -15,6 +15,7 @@ import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { uploadImage } from "../utils/api_image";
 import { API_URL } from "../utils/constants";
+import { getCategories } from "../utils/api_category";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -37,27 +38,33 @@ const ProductEdit = () => {
   const [category, setCategory] = useState("");
   const [error, setError] = useState(null);
   const [image, setImage] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    getCategories().then((data) => setCategories(data));
+  }, []);
 
   // load the product data from the backend API, and assign it to the state
   useEffect(() => {
-    getProduct(id).then((productData) => {
-      // check if productData is empty or not
-      if (productData) {
-        // update the state with the productData
-        setName(productData ? productData.name : "");
-        setDescription(productData ? productData.description : "");
-        setPrice(productData ? productData.price : 0);
-        setCategory(productData ? productData.category : "");
-        setImage(productData ? productData.image : null);
-      } else {
-        // if not available, set error message
-        setError("Product not found");
-      }
-    })
-    .catch(error => {
+    getProduct(id)
+      .then((productData) => {
+        // check if productData is empty or not
+        if (productData) {
+          // update the state with the productData
+          setName(productData ? productData.name : "");
+          setDescription(productData ? productData.description : "");
+          setPrice(productData ? productData.price : 0);
+          setCategory(productData ? productData.category : "");
+          setImage(productData ? productData.image : null);
+        } else {
+          // if not available, set error message
+          setError("Product not found");
+        }
+      })
+      .catch((error) => {
         // catch the API error
         setError("Product not found");
-    });
+      });
   }, [id]);
 
   const handleFormSubmit = async (event) => {
@@ -79,17 +86,17 @@ const ProductEdit = () => {
   // if error, return the error
   if (error) {
     return (
-        <>
-            <Header />
-            <Container maxWidth="sm" sx={{ textAlign: "center" }}>
-                <Typography variant="h3" align="center" mb={2} color="error">
-                    {error}
-                </Typography>
-                <Button variant="contained" color="primary" component={Link} to="/">
-                    Go back to Home
-                </Button>
-            </Container>
-        </>
+      <>
+        <Header />
+        <Container maxWidth="sm" sx={{ textAlign: "center" }}>
+          <Typography variant="h3" align="center" mb={2} color="error">
+            {error}
+          </Typography>
+          <Button variant="contained" color="primary" component={Link} to="/">
+            Go back to Home
+          </Button>
+        </Container>
+      </>
     );
   }
 
@@ -142,13 +149,11 @@ const ProductEdit = () => {
               label="Category"
               onChange={(event) => {
                 setCategory(event.target.value);
-                setPage(1);
               }}
             >
-              <MenuItem value={"Consoles"}>Consoles</MenuItem>
-              <MenuItem value={"Games"}>Games</MenuItem>
-              <MenuItem value={"Accessories"}>Accessories</MenuItem>
-              <MenuItem value={"Subscriptions"}>Subscriptions</MenuItem>
+              {categories.map((cat) => (
+                <MenuItem value={cat._id}>{cat.label}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>

@@ -63,6 +63,22 @@ const Header = (props) => {
         >
           Manage Categories
         </Button>
+        <Button
+          variant={current === "login" ? "contained" : "outlined"}
+          color="primary"
+          component={Link}
+          to="/login"
+        >
+          Login
+        </Button>
+        <Button
+          variant={current === "signup" ? "contained" : "outlined"}
+          color="primary"
+          component={Link}
+          to="/signup"
+        >
+          Sign Up
+        </Button>
       </Box>
     </Box>
   );

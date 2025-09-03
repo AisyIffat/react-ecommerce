@@ -21,11 +21,13 @@ import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { addToCart } from "../utils/cart";
 import { API_URL } from "../utils/constants";
+import { getCategories } from "../utils/api_category";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     // get products from API
@@ -33,6 +35,10 @@ export default function Products() {
       setProducts(data);
     });
   }, [category, page]);
+
+  useEffect(() => {
+    getCategories().then((data) => setCategories(data));
+  }, []);
 
   const handleProductDelete = async (id) => {
     Swal.fire({
@@ -116,10 +122,9 @@ export default function Products() {
               }}
             >
               <MenuItem value="all">All</MenuItem>
-              <MenuItem value={"Consoles"}>Consoles</MenuItem>
-              <MenuItem value={"Games"}>Games</MenuItem>
-              <MenuItem value={"Accessories"}>Accessories</MenuItem>
-              <MenuItem value={"Subscriptions"}>Subscriptions</MenuItem>
+              {categories.map((cat) => (
+                <MenuItem value={cat._id}>{cat.label}</MenuItem>    
+              ))}
             </Select>
           </FormControl>
         </Box>
@@ -154,7 +159,7 @@ export default function Products() {
                       color="success"
                     />
                     <Chip
-                      label={product.category}
+                      label={product.category ? product.category.label : ""}
                       variant="outlined"
                       color="primary"
                     />
