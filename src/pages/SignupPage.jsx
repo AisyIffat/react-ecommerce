@@ -65,6 +65,7 @@ const SignupPage = () => {
             <Typography variant="h6">Password</Typography>
             <TextField
               label="Password"
+              type="password"
               fullWidth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -74,6 +75,7 @@ const SignupPage = () => {
             <Typography variant="h6">Confirm Password</Typography>
             <TextField
               label="Confirm Password"
+              type="password"
               fullWidth
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

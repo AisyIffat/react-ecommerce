@@ -52,6 +52,7 @@ const LoginPage = () => {
             <Typography variant="h6">Password</Typography>
             <TextField
               label="Password"
+              type="password"
               fullWidth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
